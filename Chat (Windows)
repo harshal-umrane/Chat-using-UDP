@@ -1,0 +1,48 @@
+import socket
+import os
+import threading
+
+
+server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+ip = "192.168.1.37"
+port = 1234
+server.bind((ip,port))
+
+
+def sender():
+  data = ""
+  client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  #server_ip = "192.168.43.165"
+  
+  print("Enter the Server IP : ")
+  server_ip = input()
+  server_port = 1234
+  print("Enter your name : ")
+  name = input()
+  print("\nReaching port 1234........")
+  print("Connected\n")
+  print("Joined in as %s" %name)
+  print()
+  print(" CHAT \n")
+  while True:
+    if "Bye" in data or "bye" in data or "Exit" in data or "exit" in data:
+      print("\nClosed\n")
+      os._exit(1)
+    #print("> ",end="")
+    data = input()
+    
+    final_data = "> " + name + " : " + data
+    client.sendto(final_data.encode() , (server_ip, server_port ) )
+
+def receiver():
+  while True:
+    x = server.recvfrom(1024)
+    clientIP = x[1][0]
+    print(x[0].decode())
+    
+
+send = threading.Thread( target = sender )
+recv = threading.Thread( target = receiver )
+
+send.start()
+recv.start()
